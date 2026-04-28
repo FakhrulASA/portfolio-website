@@ -29,6 +29,37 @@
   --trans: 0.25s ease;
 }
 
+/* ===================== LIGHT MODE ===================== */
+body.light {
+  --bg: #f0f2ff;
+  --bg2: #e8eaf6;
+  --surface: #ffffff;
+  --surface2: #eef0fb;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-hover: rgba(0, 0, 0, 0.16);
+  --purple: #6d28d9;
+  --cyan: #0891b2;
+  --purple-light: #7c3aed;
+  --cyan-light: #0e7490;
+  --text: #0f0f1a;
+  --muted: #4a4a6a;
+  --dim: #8a8aaa;
+  --grad: linear-gradient(135deg, #6d28d9 0%, #0891b2 100%);
+  --grad-text: linear-gradient(90deg, #6d28d9 0%, #0891b2 100%);
+  --shadow-sm: 0 4px 16px rgba(109, 40, 217, 0.1);
+  --shadow-md: 0 8px 32px rgba(109, 40, 217, 0.15);
+  --shadow-lg: 0 20px 60px rgba(109, 40, 217, 0.18);
+}
+
+/* Smooth colour transition on every element when theme changes */
+body, body * {
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
 /* ===================== KEYFRAMES ===================== */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(40px); }
@@ -164,6 +195,9 @@ button { font-family: var(--font); }
   border-bottom-color: var(--border);
   padding: 0.9rem 2rem;
 }
+body.light .navbar.scrolled {
+  background: rgba(240, 242, 255, 0.88);
+}
 .nav-container {
   max-width: 1100px;
   margin: 0 auto;
@@ -205,6 +239,36 @@ button { font-family: var(--font); }
 }
 .nav-link:hover, .nav-link.active { color: var(--text); }
 .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+/* ===================== THEME TOGGLE ===================== */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border-hover);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background 0.25s ease, border-color 0.25s ease,
+              color 0.25s ease, transform 0.25s ease;
+}
+.theme-toggle:hover {
+  background: var(--surface2);
+  border-color: var(--purple-light);
+  color: var(--text);
+  transform: rotate(20deg) scale(1.08);
+}
+.theme-toggle svg {
+  width: 17px;
+  height: 17px;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+body.light .theme-toggle svg { transform: rotate(180deg); }
 
 /* ===================== PAGE ===================== */
 .page { min-height: 100vh; padding-top: 80px; }

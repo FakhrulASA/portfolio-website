@@ -1,11 +1,28 @@
 import React, { useEffect, useRef } from 'react';
 
-/* ── colour palette (must match CSS vars) ── */
-const C_PURPLE      = '#7c3aed';
-const C_CYAN        = '#06b6d4';
-const C_PURPLE_LIGHT = '#a78bfa';
-const C_CYAN_LIGHT  = '#67e8f9';
-const PALETTE       = [C_PURPLE, C_CYAN, C_PURPLE_LIGHT, C_CYAN_LIGHT];
+/* ── Dark palette ── */
+const DARK = {
+  p1: '#7c3aed', p2: '#06b6d4', p3: '#a78bfa', p4: '#67e8f9',
+  connR: 124, connG: 58,  connB: 237,
+  gridA:   0.06,
+  partA:  [0.30, 0.75],
+  connA:   0.20,
+  shapeA: [0.04, 0.10],
+  tokA:   [0.05, 0.12],
+  tokKotlinA: [0.10, 0.20],
+};
+
+/* ── Light palette — darker, more saturated so they show on #f0f2ff ── */
+const LIGHT = {
+  p1: '#5b21b6', p2: '#0e7490', p3: '#6d28d9', p4: '#0891b2',
+  connR: 91,  connG: 33,  connB: 182,
+  gridA:   0.18,
+  partA:  [0.55, 0.90],
+  connA:   0.45,
+  shapeA: [0.12, 0.24],
+  tokA:   [0.18, 0.32],
+  tokKotlinA: [0.28, 0.48],
+};
 
 const CODE_TOKENS = [
   /* ── Kotlin language ── */
@@ -67,63 +84,59 @@ const AnimatedBackground: React.FC = () => {
     resize();
     window.addEventListener('resize', resize);
 
+    /* ── theme helper — read live each frame ── */
+    const theme = () => document.body.classList.contains('light') ? LIGHT : DARK;
+
     /* ── build scene ── */
     const N_PART   = Math.min(65, Math.floor((W * H) / 12000));
     const N_TOKENS = 32;
     const N_SHAPES = 12;
     const CONN     = Math.min(160, W * 0.13);
 
-    const mkParticle = (): Particle => ({
-      x: rand(0, W), y: rand(0, H),
-      vx: rand(-0.22, 0.22), vy: rand(-0.22, 0.22),
-      r: rand(1.5, 3.2),
-      color: pick(PALETTE),
-      alpha: rand(0.3, 0.75),
-    });
+    const mkParticle = (): Particle => {
+      const T = theme();
+      return {
+        x: rand(0, W), y: rand(0, H),
+        vx: rand(-0.22, 0.22), vy: rand(-0.22, 0.22),
+        r: rand(1.5, 3.2),
+        color: pick([T.p1, T.p2, T.p3, T.p4]),
+        alpha: rand(T.partA[0], T.partA[1]),
+      };
+    };
 
     const mkToken = (): Token => {
+      const T = theme();
       const text = pick(CODE_TOKENS);
-      /* Kotlin / Android keywords get a bit bigger and brighter */
       const isKotlin = /fun |val |var |data class|@Composable|ViewModel|StateFlow|LaunchedEffect|@Inject|@HiltViewModel|suspend|coroutine|Dispatchers/.test(text);
       return {
         x: rand(0, W), y: rand(0, H),
         vx: rand(-0.1, 0.1), vy: rand(-0.07, 0.07),
         text,
-        alpha: isKotlin ? rand(0.1, 0.2) : rand(0.05, 0.12),
+        alpha: isKotlin ? rand(T.tokKotlinA[0], T.tokKotlinA[1]) : rand(T.tokA[0], T.tokA[1]),
         size: isKotlin ? rand(14, 26) : rand(11, 20),
         rot: rand(-0.18, 0.18),
         rotV: rand(-0.003, 0.003),
-        color: isKotlin ? pick([C_CYAN_LIGHT, C_PURPLE_LIGHT]) : pick([C_PURPLE_LIGHT, C_CYAN_LIGHT]),
+        color: isKotlin ? pick([T.p2, T.p3]) : pick([T.p3, T.p4]),
       };
     };
 
-    const mkShape = (): Shape => ({
-      x: rand(0, W), y: rand(0, H),
-      vx: rand(-0.09, 0.09), vy: rand(-0.09, 0.09),
-      size: rand(18, 64),
-      rot: rand(0, Math.PI * 2),
-      rotV: rand(-0.006, 0.006),
-      sides: pick([3, 4, 6]),
-      alpha: rand(0.04, 0.1),
-      color: pick([C_PURPLE, C_CYAN, C_PURPLE_LIGHT]),
-    });
+    const mkShape = (): Shape => {
+      const T = theme();
+      return {
+        x: rand(0, W), y: rand(0, H),
+        vx: rand(-0.09, 0.09), vy: rand(-0.09, 0.09),
+        size: rand(18, 64),
+        rot: rand(0, Math.PI * 2),
+        rotV: rand(-0.006, 0.006),
+        sides: pick([3, 4, 6]),
+        alpha: rand(T.shapeA[0], T.shapeA[1]),
+        color: pick([T.p1, T.p2, T.p3]),
+      };
+    };
 
     const particles = Array.from({ length: N_PART },   mkParticle);
     const tokens    = Array.from({ length: N_TOKENS }, mkToken);
     const shapes    = Array.from({ length: N_SHAPES }, mkShape);
-
-    /* ── dot grid ── */
-    const drawGrid = () => {
-      const sp = 55;
-      ctx.fillStyle = 'rgba(124,58,237,0.06)';
-      for (let x = sp; x < W; x += sp) {
-        for (let y = sp; y < H; y += sp) {
-          ctx.beginPath();
-          ctx.arc(x, y, 0.75, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      }
-    };
 
     /* ── wrap helpers ── */
     const wrapPos = (obj: { x: number; y: number; vx: number; vy: number }, pad = 60) => {
@@ -136,9 +149,18 @@ const AnimatedBackground: React.FC = () => {
     /* ── main draw loop ── */
     const draw = () => {
       ctx.clearRect(0, 0, W, H);
+      const T = theme();
 
       /* 1 — dot grid */
-      drawGrid();
+      ctx.fillStyle = `rgba(${T.connR},${T.connG},${T.connB},${T.gridA})`;
+      const sp = 55;
+      for (let x = sp; x < W; x += sp) {
+        for (let y = sp; y < H; y += sp) {
+          ctx.beginPath();
+          ctx.arc(x, y, 0.75, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
 
       /* 2 — wire-frame shapes */
       for (const s of shapes) {
@@ -148,7 +170,6 @@ const AnimatedBackground: React.FC = () => {
         ctx.lineWidth   = 0.9;
         polygon(ctx, s.x, s.y, s.sides, s.size, s.rot);
         ctx.stroke();
-        /* inner smaller shape for depth */
         polygon(ctx, s.x, s.y, s.sides, s.size * 0.5, s.rot + Math.PI / s.sides);
         ctx.stroke();
         ctx.restore();
@@ -181,9 +202,9 @@ const AnimatedBackground: React.FC = () => {
           const dy   = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < CONN) {
-            const alpha = (1 - dist / CONN) * 0.2;
+            const alpha = (1 - dist / CONN) * T.connA;
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(124,58,237,${alpha.toFixed(3)})`;
+            ctx.strokeStyle = `rgba(${T.connR},${T.connG},${T.connB},${alpha.toFixed(3)})`;
             ctx.lineWidth   = 0.65;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
