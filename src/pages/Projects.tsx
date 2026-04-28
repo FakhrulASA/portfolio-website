@@ -83,8 +83,7 @@ const Projects: React.FC = () => {
           <div className="section-label">Portfolio</div>
           <h2 className="section-title">Featured Projects</h2>
           <p className="section-desc">
-            Mobile applications and libraries I've built — from fintech platforms
-            serving millions of users to open-source tools for the developer community.
+            From architecting high-stakes fintech platforms serving millions to shipping niche open-source libraries, my portfolio spans the full software lifecycle. Whether it’s high-concurrency enterprise systems or experimental community tools, I’ve delivered solutions across the entire technical spectrum.
           </p>
         </div>
         <div className="projects-grid">

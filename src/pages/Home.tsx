@@ -1,50 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-
-function useCountUp(target: number, duration: number, start: boolean) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!start) return;
-    let startTime: number | null = null;
-    const step = (ts: number) => {
-      if (!startTime) startTime = ts;
-      const progress = Math.min((ts - startTime) / duration, 1);
-      setCount(Math.floor(progress * target));
-      if (progress < 1) requestAnimationFrame(step);
-      else setCount(target);
-    };
-    requestAnimationFrame(step);
-  }, [target, duration, start]);
-  return count;
-}
-
-const StatItem: React.FC<{ number: string; label: string; triggered: boolean }> = ({ number, label, triggered }) => {
-  const numericMatch = number.match(/^(\d+)/);
-  const numericVal = numericMatch ? parseInt(numericMatch[1], 10) : 0;
-  const suffix = number.replace(/^\d+/, '');
-  const counted = useCountUp(numericVal, 1600, triggered);
-  return (
-    <div className="stat-item">
-      <div className="stat-number">{triggered ? `${counted}${suffix}` : number}</div>
-      <div className="stat-label">{label}</div>
-    </div>
-  );
-};
+import React from 'react';
 
 const Home: React.FC = () => {
-  const [statsTriggered, setStatsTriggered] = useState(false);
-  const statsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = statsRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setStatsTriggered(true); observer.disconnect(); } },
-      { threshold: 0.4 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
   const stats = [
     { number: '100M+', label: 'Users Reached' },
     { number: '6+', label: 'Years Experience' },
@@ -61,15 +17,13 @@ const Home: React.FC = () => {
               <span className="hero-badge-dot" />
               Available for opportunities
             </div>
-            <h1 className="hero-name">Fakhrul Alam</h1>
+            <h1 className="hero-name">Fakhrul A. Siddiqei</h1>
             <p className="hero-title">
               Senior Software Engineer —{' '}
               <span>Lead Full Stack Mobile Developer | AI-First Workflow & Integration</span>
             </p>
             <p className="hero-desc">
-              6+ years crafting high-performance mobile experiences for Digital Banking
-              and Telecom sectors. Architecting scalable solutions for 100M+ users with
-              deep expertise in Clean Architecture, Fintech Security, and TDD.
+              From architecting high-stakes fintech platforms serving millions to shipping niche open-source libraries, my portfolio spans the full software lifecycle. Whether it’s high-concurrency enterprise systems or experimental community tools, I’ve delivered solutions across the entire technical spectrum.
             </p>
             <div className="hero-socials">
               <a href="https://linkedin.com/in/siddiqei" target="_blank" rel="noreferrer" className="hero-social-link">
@@ -95,15 +49,17 @@ const Home: React.FC = () => {
               <a href="#projects" className="btn-primary">View Projects →</a>
               <a href="#contact" className="btn-secondary">Get In Touch</a>
             </div>
-            <div className="hero-stats" ref={statsRef}>
+            <div className="hero-stats">
               {stats.map((s) => (
-                <StatItem key={s.label} number={s.number} label={s.label} triggered={statsTriggered} />
+                <div className="stat-item" key={s.label}>
+                  <div className="stat-number">{s.number}</div>
+                  <div className="stat-label">{s.label}</div>
+                </div>
               ))}
             </div>
           </div>
           <div className="hero-right">
             <div className="hero-photo-wrapper">
-              <span className="hero-photo-ring2" />
               <img src="/profile.png" alt="Fakhrul Alam" className="hero-avatar" />
             </div>
           </div>
