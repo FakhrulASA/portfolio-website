@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
@@ -6,6 +6,21 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 
 const App: React.FC = () => {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -48px 0px' }
+    );
+    const elements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
   return (
     <>
       <Header />

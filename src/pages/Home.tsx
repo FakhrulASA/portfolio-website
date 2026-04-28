@@ -1,6 +1,50 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+
+function useCountUp(target: number, duration: number, start: boolean) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    let startTime: number | null = null;
+    const step = (ts: number) => {
+      if (!startTime) startTime = ts;
+      const progress = Math.min((ts - startTime) / duration, 1);
+      setCount(Math.floor(progress * target));
+      if (progress < 1) requestAnimationFrame(step);
+      else setCount(target);
+    };
+    requestAnimationFrame(step);
+  }, [target, duration, start]);
+  return count;
+}
+
+const StatItem: React.FC<{ number: string; label: string; triggered: boolean }> = ({ number, label, triggered }) => {
+  const numericMatch = number.match(/^(\d+)/);
+  const numericVal = numericMatch ? parseInt(numericMatch[1], 10) : 0;
+  const suffix = number.replace(/^\d+/, '');
+  const counted = useCountUp(numericVal, 1600, triggered);
+  return (
+    <div className="stat-item">
+      <div className="stat-number">{triggered ? `${counted}${suffix}` : number}</div>
+      <div className="stat-label">{label}</div>
+    </div>
+  );
+};
 
 const Home: React.FC = () => {
+  const [statsTriggered, setStatsTriggered] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = statsRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setStatsTriggered(true); observer.disconnect(); } },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const stats = [
     { number: '100M+', label: 'Users Reached' },
     { number: '6+', label: 'Years Experience' },
@@ -23,8 +67,8 @@ const Home: React.FC = () => {
               <span>Lead Full Stack Mobile Developer | AI-First Workflow & Integration</span>
             </p>
             <p className="hero-desc">
-              5+ years crafting high-performance mobile experiences for Digital Banking
-              and Telecom sectors. Architecting scalable solutions for 20M+ users with
+              6+ years crafting high-performance mobile experiences for Digital Banking
+              and Telecom sectors. Architecting scalable solutions for 100M+ users with
               deep expertise in Clean Architecture, Fintech Security, and TDD.
             </p>
             <div className="hero-socials">
@@ -51,17 +95,15 @@ const Home: React.FC = () => {
               <a href="#projects" className="btn-primary">View Projects →</a>
               <a href="#contact" className="btn-secondary">Get In Touch</a>
             </div>
-            <div className="hero-stats">
+            <div className="hero-stats" ref={statsRef}>
               {stats.map((s) => (
-                <div className="stat-item" key={s.label}>
-                  <div className="stat-number">{s.number}</div>
-                  <div className="stat-label">{s.label}</div>
-                </div>
+                <StatItem key={s.label} number={s.number} label={s.label} triggered={statsTriggered} />
               ))}
             </div>
           </div>
           <div className="hero-right">
             <div className="hero-photo-wrapper">
+              <span className="hero-photo-ring2" />
               <img src="/profile.png" alt="Fakhrul Alam" className="hero-avatar" />
             </div>
           </div>

@@ -79,7 +79,7 @@ const Projects: React.FC = () => {
   return (
     <div className="page">
       <section className="section">
-        <div className="section-header">
+        <div className="section-header reveal">
           <div className="section-label">Portfolio</div>
           <h2 className="section-title">Featured Projects</h2>
           <p className="section-desc">
@@ -89,7 +89,7 @@ const Projects: React.FC = () => {
         </div>
         <div className="projects-grid">
           {projects.map((p, i) => (
-            <div className="project-card" key={i}>
+            <div className={`project-card reveal delay-${(i % 4) + 1}`} key={i}>
               <div className="project-icon">{p.icon}</div>
               <div className="project-title">{p.title}</div>
               <div className="project-subtitle">{p.subtitle}</div>

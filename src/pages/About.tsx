@@ -1,7 +1,8 @@
 import React from 'react';
 
 const About: React.FC = () => {
-  const skills = [
+const skills = [
+    { category: 'AI & Machine Learning', items: ['LLM Integration (Gemini/Claude)', 'RAG Architecture', 'Vector Databases (Pinecone/Milvus)', 'Tree-sitter', 'LangChain', 'Prompt Engineering', 'TensorFlow Lite'] },
     { category: 'Languages', items: ['Kotlin', 'Dart', 'Java', 'Swift', 'Python', 'SQL', 'C++', 'Groovy', 'Bash'] },
     { category: 'Mobile Development', items: ['Android SDK', 'Jetpack Compose', 'Flutter', 'KMP', 'SwiftUI', 'UIKit'] },
     { category: 'Architecture', items: ['Clean Architecture', 'MVVM', 'MVP', 'SOLID', 'BLoC Pattern', 'Modularization'] },
@@ -10,7 +11,6 @@ const About: React.FC = () => {
     { category: 'Cloud & DevOps', items: ['Firebase', 'Supabase', 'Docker', 'Jenkins', 'GitHub Actions', 'AWS S3', 'AWS EC2'] },
     { category: 'Testing', items: ['JUnit', 'Mockito', 'UI Testing', 'Integration Testing', 'Postman', 'Crashlytics', 'Mixpanel'] },
   ];
-
   const experience = [
     {
       role: 'Senior Software Engineer',
@@ -100,13 +100,11 @@ const About: React.FC = () => {
   return (
     <div className="page">
       <section className="section">
-        <div className="section-header">
+        <div className="section-header reveal">
           <div className="section-label">About Me</div>
           <h2 className="section-title">Building Impactful<br />Mobile Experiences</h2>
           <p className="section-desc">
-            Senior Software Engineer with 5+ years specializing in Android and Flutter for Digital Banking
-            and Telecom. Expert in Clean Architecture, PCI-DSS Security, and Test-Driven Development.
-            Passionate about reducing technical debt and leading high-performing engineering teams.
+           Dedicated to building resilient mobile ecosystems that scale. With a track record of maintaining 99.9% uptime for apps with 20M+ MAU, I specialize in Clean Architecture, PCI-DSS compliant security, and Test-Driven Development. I bridge the gap between complex backend logic and seamless UI, currently integrating Vector Databases and LLM workflows to optimize user self-service. My goal is to eliminate technical debt while leading engineering teams toward technical excellence and data-driven performance.
           </p>
         </div>
       </section>
@@ -114,13 +112,13 @@ const About: React.FC = () => {
       <div className="section-divider" />
 
       <section className="section">
-        <div className="section-header">
+        <div className="section-header reveal">
           <div className="section-label">Core Skills</div>
           <h2 className="section-title">Technical Expertise</h2>
         </div>
         <div className="skills-section">
-          {skills.map((group) => (
-            <div className="skills-category" key={group.category}>
+          {skills.map((group, i) => (
+            <div className={`skills-category reveal delay-${(i % 5) + 1}`} key={group.category}>
               <div className="skills-category-name">{group.category}</div>
               <div className="skills-tags">
                 {group.items.map((skill) => (
@@ -135,13 +133,13 @@ const About: React.FC = () => {
       <div className="section-divider" />
 
       <section className="section">
-        <div className="section-header">
+        <div className="section-header reveal">
           <div className="section-label">Work History</div>
           <h2 className="section-title">Professional Experience</h2>
         </div>
         <div className="timeline">
           {experience.map((exp, i) => (
-            <div className="timeline-item" key={i}>
+            <div className={`timeline-item reveal delay-${(i % 4) + 1}`} key={i}>
               <div className="timeline-date">{exp.period} · {exp.location}</div>
               <div className="timeline-role">{exp.role}</div>
               <div className="timeline-company"><span>{exp.company}</span></div>
@@ -156,13 +154,13 @@ const About: React.FC = () => {
       <div className="section-divider" />
 
       <section className="section">
-        <div className="section-header">
+        <div className="section-header reveal">
           <div className="section-label">Education</div>
           <h2 className="section-title">Academic Background</h2>
         </div>
         <div className="edu-grid">
           {education.map((edu, i) => (
-            <div className="edu-card" key={i}>
+            <div className={`edu-card reveal-scale delay-${i + 1}`} key={i}>
               <div className="edu-degree">{edu.degree}</div>
               <div className="edu-school">{edu.school}</div>
               <div className="edu-meta">{edu.period} · {edu.cgpa}</div>
@@ -174,13 +172,13 @@ const About: React.FC = () => {
       <div className="section-divider" />
 
       <section className="section">
-        <div className="section-header">
+        <div className="section-header reveal">
           <div className="section-label">Credentials</div>
           <h2 className="section-title">Certifications</h2>
         </div>
         <div className="cert-list">
           {certifications.map((cert, i) => (
-            <div className="cert-item" key={i}>
+            <div className={`cert-item reveal delay-${i + 1}`} key={i}>
               <div>
                 <div className="cert-name">{cert.name}</div>
                 <div className="cert-issuer">{cert.issuer}</div>

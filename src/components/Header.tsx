@@ -3,10 +3,15 @@ import React, { useState, useEffect } from 'react';
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', onScroll);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 50);
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(docH > 0 ? Math.round((window.scrollY / docH) * 100) : 0);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
@@ -37,6 +42,10 @@ const Header: React.FC = () => {
 
   return (
     <header className={`navbar${scrolled ? ' scrolled' : ''}`}>
+      <div
+        className="scroll-progress-bar"
+        style={{ width: `${progress}%` }}
+      />
       <div className="nav-container">
         <a href="#home" className="nav-brand">FA</a>
         <nav>

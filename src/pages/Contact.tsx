@@ -87,7 +87,7 @@ const Contact: React.FC = () => {
   return (
     <div className="page">
       <section className="section">
-        <div className="section-header">
+        <div className="section-header reveal">
           <div className="section-label">Get In Touch</div>
           <h2 className="section-title">Let's Work Together</h2>
           <p className="section-desc">
@@ -97,12 +97,12 @@ const Contact: React.FC = () => {
         </div>
         <div className="contact-grid">
           <div className="contact-info-list">
-            {contacts.map((c) => (
+            {contacts.map((c, i) => (
               <a
                 href={c.href}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="contact-info-item"
+                className={`contact-info-item reveal-left delay-${i + 1}`}
                 key={c.label}
               >
                 <div className="contact-icon">{c.icon}</div>
@@ -115,7 +115,7 @@ const Contact: React.FC = () => {
           </div>
 
           {status === 'success' ? (
-            <div className="contact-success">
+            <div className="contact-success reveal-right visible">
               <div className="contact-success-icon">✓</div>
               <h3 className="contact-success-title">Message Sent!</h3>
               <p className="contact-success-desc">
@@ -126,7 +126,7 @@ const Contact: React.FC = () => {
               </button>
             </div>
           ) : (
-            <form className="contact-form" onSubmit={handleSubmit} noValidate>
+            <form className="contact-form reveal-right" onSubmit={handleSubmit} noValidate>
               <div className="form-row">
                 <div className="form-group">
                   <label className="form-label">Name</label>
